@@ -60,7 +60,7 @@
             $q .= " ORDER BY {$order_by} ASC ";
             $r = mysqli_query($dbc, $q) or die("Query{$q} \n <br/> MySQL Error: ".mysqli_error($dbc));
             
-            while($bangdiem = mysqli_fetch_array($r, MYSQL_ASSOC)) {
+            while($bangdiem = mysqli_fetch_array($r)) {
                 echo "
                     <tr>
                         <td>{$bangdiem['Hoten']}</td>

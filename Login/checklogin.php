@@ -1,39 +1,50 @@
 <?php
 // Khai báo biến
-$host="localhost"; // Tên Host
-$username="root"; // Tên tài khoản gốc của Mysql
-$password=""; // Mật khẩu tài khoản gốc Mysql - thường mặc định là rỗng nếu dùng xampp
-$db_name="quanlisinhvien"; // Tên CSDL
-$tbl_name="user"; // Tên bảng cần truy vấn Table
+$host = "localhost"; // Tên Host
+$username = "root"; // Tên tài khoản gốc của MySQL
+$password = ""; // Mật khẩu tài khoản gốc MySQL - thường mặc định là rống nếu dùng XAMPP
+$db_name = "quanlisinhvien"; // Tên CSDL
+$tbl_name = "user"; // Tên bảng cần truy vấn Table
 
-// Kết nối đến server và lựa chọn cơ sở dữ liệu
-mysql_connect("$host", "$username", "$password")or die("cannot connect");  
-mysql_select_db("$db_name")or die("Không thể kết nối đến cơ sở dữ liệu"); 
+// Kết nối đến server và lựa chọn cơ sợ dữ liệu
+$conn = new mysqli($host, $username, $password, $db_name);
 
-// username và password gởi đến từ form đăng nhập 
-$myusername=$_POST['myusername'];  
-$mypassword=$_POST['mypassword'];  
-
-// để bảo vệ khỏi  MySQL injection (more detail about MySQL injection) 
-$myusername = stripslashes($myusername); 
-$mypassword = stripslashes($mypassword); 
-$myusername = mysql_real_escape_string($myusername); 
-$mypassword = mysql_real_escape_string($mypassword); 
-$sql="SELECT * FROM $tbl_name WHERE username='$myusername' and password='$mypassword'"; 
-$result=mysql_query($sql); 
-// Mysql_num_row số user tìm thấy từ database 
-$count=mysql_num_rows($result); 
-// nếu tìm thấy  $myusername và $mypassword, kết quả trả về sẽ là 1 dòng 
-
-if($count==1){ 
-	// đăng ký $myusername, $mypassword và chuyển xong file "login_success.php" 
-	session_start();
-	$_SESSION['userid'] = $myusername;
-	$_SESSION['level'] = $mypassword;
-
-	header("location:login_success.php"); 
-} 
-else { 
-	echo "Sai Username hoac Password"; 
+// Kiểm tra kết nối
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
 }
+
+// username và password gởi đến từ form đăng nhập
+$myusername = $_POST['myusername'];
+$mypassword = $_POST['mypassword'];
+
+// Để bảo vệ khỏi MySQL injection
+$myusername = $conn->real_escape_string($myusername);
+$mypassword = $conn->real_escape_string($mypassword);
+
+// Thực hiện truy vấn
+$sql = "SELECT * FROM $tbl_name WHERE username = '$myusername' AND password = '$mypassword'";
+$result = $conn->query($sql);
+
+// Đếm số user tìm thấy từ database
+if ($result) {
+    $count = $result->num_rows;
+
+    if ($count == 1) {
+        // Đăng ký $myusername, $mypassword và chuyển xong file "login_success.php"
+        session_start();
+        $_SESSION['userid'] = $myusername;
+        $_SESSION['level'] = $mypassword;
+
+        header("Location: login_success.php");
+        exit();
+    } else {
+        echo "Sai Username hoặc Password";
+    }
+} else {
+    echo "Lỗi truy vấn: " . $conn->error;
+}
+
+// Đóng kết nối
+$conn->close();
 ?>

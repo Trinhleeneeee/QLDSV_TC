@@ -13,7 +13,7 @@
 	<div id="container">
 	<div id="header">
 		<h1><a href="">Student Infomation System</a></h1>
-        <p class="slogan">Ha Noi University of Science and Technology</p>
+        <p class="slogan">Trinhleeneeeee university </p>
 	</div>
 	<div id="navigation">
 		<ul>
